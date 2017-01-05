@@ -1,2 +1,2 @@
-include exact_online/localhost.key
-include exact_online/localhost.cert
+include authenticator/localhost.key
+include authenticator/localhost.cert

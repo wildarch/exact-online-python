@@ -46,6 +46,8 @@ setup(
     keywords=["Swagger", "Exact Online Rest API"],
     install_requires=REQUIRES,
     packages=find_packages(),
+    package_dir={'authenticator': 'authenticator'},
+    package_data={'authenticator': ['localhost.key', 'localhost.cert']},
     include_package_data=True,
     long_description="""\
     Interact with Exact Online database
