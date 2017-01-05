@@ -7,6 +7,7 @@ import sys
 import time
 import configparser
 import webbrowser
+import logging
 
 module_dir = os.path.dirname(os.path.abspath(sys.modules[__name__].__file__))
 
@@ -19,9 +20,9 @@ login_url = '{0}?client_id={1}&redirect_uri={2}&response_type=code&force_login=0
 force_login = 0
 
 # Reduce logging level so Flask doesn't clutter the console
-import logging
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
+
 
 class Server:
     def __init__(self):
@@ -47,14 +48,7 @@ def get_code():
     return server.code
 
 
-def get_token():
-    saved_token = get_saved_token()
-    if saved_token is not None:
-        return saved_token
-
-    print("No saved token found")
-    code = get_code()
-    # Sends a POST request to retrieve the access token
+def acquire_token(code):
     data = {
         'code': code,
         'redirect_uri': redirect_uri,
@@ -63,7 +57,18 @@ def get_token():
         'client_secret': secret
     }
     json = requests.post(token_url, data=data).json()
-    token = json['access_token']
+    return json['access_token']
+
+
+def get_token():
+    saved_token = get_saved_token()
+    if saved_token is not None:
+        return saved_token
+
+    print("No saved token found")
+    code = get_code()
+    # Sends a POST request to retrieve the access token
+    token = acquire_token(code)
     save_token(token)
     return token
 
@@ -78,8 +83,7 @@ def get_saved_token():
         if 'token' in main and 'timestamp' in main:
             timestamp = float(main['timestamp'])
             now = time.time()
-            if now - timestamp < 600: #10 minutes
-                #print("main token found!")
+            if now - timestamp < 600:  # 10 minutes
                 return main['token']
     except Exception as e:
         print(e)
@@ -95,11 +99,9 @@ def save_token(token):
         config.write(file)
 
 
-
 if __name__ == '__main__':
     if os.geteuid() != 0:
         print("You must run this script as root!")
         os._exit(1)
-    #print(login_url)
     token = get_token()
     sys.stdout.write(token)
