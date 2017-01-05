@@ -25,7 +25,7 @@
 import sys
 from setuptools import setup, find_packages
 
-NAME = "exact-online"
+NAME = "exact_online"
 VERSION = "1.0.0"
 
 # To install the library, run the following
