@@ -63,3 +63,4 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 __old__
+idea/
