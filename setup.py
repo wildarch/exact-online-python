@@ -47,6 +47,7 @@ setup(
     install_requires=REQUIRES,
     packages=find_packages(),
     include_package_data=True,
+    data_files=[('cert', 'data/localhost.cert'), ('key', 'data/localhost.key')],
     long_description="""\
     Interact with Exact Online database
     """
