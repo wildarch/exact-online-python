@@ -1,4 +1,3 @@
-authenticator
 certifi >= 14.05.14
 six == 1.8.0
 python_dateutil >= 2.5.3
