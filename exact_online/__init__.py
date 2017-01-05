@@ -1,10 +1,12 @@
-from swagger_client import ApiClient, DefaultApi
-import authenticator
-from urllib import parse
-from datetime import date as Date
 import re
+from datetime import date as Date
+from urllib import parse
+
+import authenticator
+from swagger_client import ApiClient, DefaultApi
 
 edm_datetime_regex = re.compile(r'/Date\((\d*)\)/')
+
 
 def get_skiptoken(d):
     url = d.next
@@ -19,12 +21,14 @@ def format_date(date):
     formatted = date.isoformat()
     return '{0}'.format(formatted)
 
+
 def format_dates(item):
     if item.start_date is not None:
         item.start_date = format_date(item.start_date)
     if item.end_date is not None:
         item.end_date = format_date(item.end_date)
     return item
+
 
 def parse_date(date_str):
     parsed = re.match(edm_datetime_regex, date_str)
@@ -40,6 +44,7 @@ def parse_dates(item):
     if item.end_date is not None:
         item.end_date = parse_date(item.end_date)
     return item
+
 
 class Exact:
     def __init__(self, access_token=None, division=None):
@@ -118,7 +123,7 @@ class Exact:
         while hasattr(res.d, 'next') and res.d.next is not None:
             skiptoken = get_skiptoken(res.d)
             res = self.client.division_payroll_employees_get(self.division, self.access_token, skiptoken=skiptoken,
-                                                           **kwargs)
+                                                             **kwargs)
             employees += res.d.results
         return employees
 
@@ -131,7 +136,7 @@ class Exact:
         while hasattr(res.d, 'next') and res.d.next is not None:
             skiptoken = get_skiptoken(res.d)
             res = self.client.division_payroll_employment_contracts_get(self.division, self.access_token, skiptoken=skiptoken,
-                                                             **kwargs)
+                                                                        **kwargs)
             employees += res.d.results
         return employees
 
