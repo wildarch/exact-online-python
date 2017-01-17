@@ -13,10 +13,13 @@ module_dir = os.path.dirname(os.path.abspath(sys.modules[__name__].__file__))
 
 oauth_url = 'https://start.exactonline.nl/api/oauth2/auth'
 token_url = 'https://start.exactonline.nl/api/oauth2/token'
-client_id = '28554901-0075-4e86-92f4-76764817b4f3'
-secret = 'CsiVKM9ou5Fy'
-redirect_uri = 'https://localhost/exactauth'
-login_url = '{0}?client_id={1}&redirect_uri={2}&response_type=code&force_login=0'.format(oauth_url, parse.quote(client_id), parse.quote(redirect_uri))
+
+
+def login_url(client_id, redirect_uri):
+    return '{0}?client_id={1}&redirect_uri={2}&response_type=code&force_login=0'.format(oauth_url,
+                                                                                        parse.quote(client_id),
+                                                                                        parse.quote(redirect_uri))
+
 force_login = 0
 
 # Reduce logging level so Flask doesn't clutter the console
@@ -38,17 +41,17 @@ class Server:
             return "Login was successful. You may close this window/tab now."
 
 
-def get_code():
+def get_code(client_id, redirect_uri):
     # Starts the server to capture the code
     server = Server()
-    webbrowser.open_new_tab(login_url) #Send the user to the Auth URL
+    webbrowser.open_new_tab(login_url(client_id, redirect_uri))
     cert = os.path.join(module_dir, 'localhost.cert')
     key = os.path.join(module_dir, 'localhost.key')
     server.app.run(port=443, debug=False, ssl_context=(cert, key))
     return server.code
 
 
-def acquire_token(code):
+def acquire_token(code, client_id, redirect_uri, secret):
     data = {
         'code': code,
         'redirect_uri': redirect_uri,
@@ -60,15 +63,15 @@ def acquire_token(code):
     return json['access_token']
 
 
-def get_token():
+def get_token(client_id, redirect_uri, secret):
     saved_token = get_saved_token()
     if saved_token is not None:
         return saved_token
 
     print("No saved token found")
-    code = get_code()
+    code = get_code(client_id, redirect_uri)
     # Sends a POST request to retrieve the access token
-    token = acquire_token(code)
+    token = acquire_token(code, client_id, redirect_uri, secret)
     save_token(token)
     return token
 
