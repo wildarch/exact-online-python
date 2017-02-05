@@ -47,11 +47,11 @@ def parse_dates(item):
 
 
 class Exact:
-    def __init__(self, access_token=None, division=None):
+    def __init__(self, access_token=None, division=None, client_id=None, redirect_uri=None, secret=None):
         self.client = DefaultApi(ApiClient())
 
         if access_token is None:
-            self.access_token = authenticator.get_token()
+            self.access_token = authenticator.get_token(client_id, redirect_uri, secret)
         else:
             self.access_token = access_token
 
