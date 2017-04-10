@@ -57,6 +57,8 @@ class Exact:
 
         if division is None:
             self.division = self.current_division
+        else:
+            self.division = division
 
     @property
     def current_division(self):
