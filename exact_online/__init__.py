@@ -4,6 +4,7 @@ from urllib import parse
 
 import authenticator
 from swagger_client import ApiClient, DefaultApi
+from threading import Timer
 
 edm_datetime_regex = re.compile(r'/Date\((\d*)\)/')
 
@@ -59,6 +60,14 @@ class Exact:
             self.division = self.current_division
         else:
             self.division = division
+
+        def refresh():
+            self.access_token = authenticator.refresh_tokens(client_id, secret)
+            print("Access token refreshed")
+            Timer(550.0, refresh).start()
+        Timer(10.0, refresh).start()
+        print("Refreshing token in 10 seconds")
+
 
     @property
     def current_division(self):
